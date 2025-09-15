@@ -7,11 +7,12 @@
 
 using namespace std;
 
-bool isPsb(vector<int> _lmts, int _n){
-    string str_n=to_string(_n);
-    for(int cur:_lmts){ //각각의 제한 번호에 대해
-        if(str_n.find(cur+'0')!=string::npos)  //n에서 발견됐다면 불가능이므로
-            return false; 
+bool isPsb(const vector<int>& _lmts, int _n){
+    if(_n < 0) return false; // 음수는 채널이 아니므로 불가능
+    string str_n = to_string(_n);
+    for(int cur : _lmts){ //각각의 제한 번호에 대해
+        if(str_n.find(char(cur + '0')) != string::npos) // n에서 발견됐다면 불가능
+            return false;
     }
     return true;  //모두 통과시 가능 번호
 }
@@ -39,11 +40,6 @@ int main(){
         cout<<ans;
         return 0;
     }
-    else if(lmt_n==0){  //제한 번호 없을 때 즉시 계산 후 출력-종료
-        ans=to_string(tgt).size()<ans?to_string(tgt).size():ans;
-        cout<<ans;
-        return 0;
-    }
 
     //이후는 100번이 아니며, 최소 1개 제한되지 않은 번호가 있는 경우임
     vector<int> lmts;  //제한 번호 목록
@@ -53,9 +49,16 @@ int main(){
     }
     sort(lmts.begin(), lmts.end());
 
-    int low_n=tgt-1;  //목표 아래 값 중 바로 번호 입력이 가능한 최대값 
-    while(!isPsb(lmts,low_n) && low_n>=0){  //바로 번호 입력이 불가능한 동안 감소
-        --low_n; 
+    // 목표 채널 자체를 직접 누를 수 있는지 먼저 확인
+    if(isPsb(lmts, tgt)){
+        ans = min(ans, (int)to_string(tgt).size());
+    }
+
+    int low_n = tgt-1;  //목표 아래 값 중 바로 번호 입력이 가능한 최대값
+    while(low_n >= 0){
+        if(isPsb(lmts, low_n)) break; // 찾음
+        if(tgt - low_n > ans) { low_n = -1; break; } // 더 이상 유리할 리 없음
+        --low_n;
     }
 
     if(low_n>=0){  //찾았다면
@@ -63,14 +66,19 @@ int main(){
         ans=cnt<ans?cnt:ans;  //더 작은 횟수로 ans 업데이트
     } //못 찾았다면 할 작업 없음
 
-    if(!(lmts.size()==9 && lmts[0]==1)){  //0만 가능한데, 못 도달하여 무한루프인 경우가 아니면
-        int up_n=tgt+1;  //목표 위 값 중 바로 번호 입력이 가능한 최소값)
-
-        while(!isPsb(lmts,up_n)){  //바로 번호 입력이 불가능한 동안 증가
-            ++up_n;  
+    if(!(lmts.size()==9 && lmts[0]==1)){  //0만 가능한 경우가 아니면 위쪽도 탐색
+        int up_n = tgt;  //목표 포함 위 값 중 바로 번호 입력이 가능한 최소값
+        const int MAX_CH = 1000000; // 안전한 상한
+        while(up_n <= MAX_CH){
+            if(isPsb(lmts, up_n)){
+                int cnt = to_string(up_n).size() + up_n - tgt;
+                ans = cnt < ans ? cnt : ans;
+                break;
+            }
+            // 비용이 현재 ans를 넘으면 더이상 볼 필요 없음
+            if(to_string(up_n).size() + up_n - tgt > ans) break;
+            ++up_n;
         }
-        int cnt=to_string(up_n).size()+up_n-tgt;  //이동하기 위한 횟수 계산
-        ans=cnt<ans?cnt:ans;  //더 작은 횟수로 저장
     }
 
     cout<<ans;  //결과 출력-종료
