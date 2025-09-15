@@ -1,4 +1,4 @@
-https://www.acmicpc.net/problem/1107
+//https://www.acmicpc.net/problem/1107
 
 #include<iostream>
 #include<vector>
@@ -8,7 +8,7 @@ https://www.acmicpc.net/problem/1107
 using namespace std;
 
 vector<int> GetCands(vector<int>const&possibles,int const&n){
-    
+
 }
 
 int main(){
