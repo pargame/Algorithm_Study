@@ -1,54 +1,69 @@
 //https://www.acmicpc.net/problem/1107
-
 #include<iostream>
 #include<vector>
 #include<algorithm>
-#include<string>
 #include<cmath>
+#include<string>
 
 using namespace std;
 
-string GetCnds(vector<int> _psbs, string const &_tgt, int _nxt_idx){
-    if(_tgt.size()<=_nxt_idx)
-        return "";
-
-    char nxt_chn=_tgt[_nxt_idx];
-    sort(_psbs.begin(),_psbs.end(),[](int const&a, int const&b){
-        return abs(a-nxt_chn+'0')<abs(b-nxt_chn+'0');
-    });
-
-    while(_psbs.size()>3)
-        _psbs.pop_back();
-    string ret;
-    for(int _:_psbs)
-        ret+=to_string(_);
-    return ret;
+bool isPsb(vector<int> _lmts, int _n){
+    string str_n=to_string(_n);
+    for(int cur:_lmts){ //각각의 제한 번호에 대해
+        if(str_n.find(cur+'0')!=string::npos)  //n에서 발견됐다면 불가능이므로
+            return false; 
+    }
+    return true;  //모두 통과시 가능 번호
 }
 
 int main(){
-    string tgt; cin>>tgt;  //목적 채널 번호
-    int lmt_n=0; cin>>lmt_n;  //제한 번호 개수
+    int tgt=0;cin>>tgt;  //목표 채널 번호
+    if(tgt==100){  //100번 채널을 봐야 할 때, 더미 입력 후 출력-종료
+        int _=0;cin>>_;
+        for(size_t __=0;__<_;++__){
+            int ___=0;cin>>___;
+        }
+
+        cout<<0;
+        return 0;
+    }
+
+    int ans=abs(100-tgt);  //기본적으로 +/- 로 이동한 값 저장
+
+    int lmt_n=0;cin>>lmt_n;  //제한 번호 개수
+    if(lmt_n==10){  //모든 버튼이 불능일 때, 더미 입력 후 출력-종료
+        for(size_t _=0;_<10;++_){
+            int __=0;cin>>__;
+        }
+
+        cout<<ans;
+        return 0;
+    }
+
+    //이후는 100번이 아니며, 최소 1개 제한되지 않은 번호가 있는 경우임
     vector<int> lmts;  //제한 번호 목록
     for(size_t _=0;_<lmt_n;++_){
         int __=0; cin>>__;
         lmts.push_back(__);
     }
-    sort(lmts.begin(),lmts.end());
 
-    vector<int> psbs{0,1,2,3,4,5,6,7,8,9};  //가능 번호 목록
-    for(int const&n:lmts){
-        psbs.erase(find(psbs.begin(),psbs.end(),n));
-    }
-    //======================================================
-    int ans=abs(stoi(tgt)-100);
-    vector<string>S
-    for(ch fst_chn:GetCnds(psbs,tgt,1)){
-        string out(1,fst_chn);
-        while(!S.empty()){
-            if(S.size()==tgt.size)
-        }
+    int low_n=tgt-1;  //목표 아래 값 중 바로 번호 입력이 가능한 최대값 
+    while(!isPsb(lmts,low_n) && low_n>=0){  //바로 번호 입력이 불가능한 동안 감소
+        --low_n; 
     }
 
-    cout<<ans;
+    if(low_n>=0){  //찾았다면
+        int cnt=to_string(low_n).size()+tgt-low_n;  //이동하기 위한 횟수 계산
+        ans=cnt<ans?cnt:ans;  //더 작은 횟수로 ans 업데이트
+    } //못 찾았다면 할 작업 없음
+
+    int up_n=tgt+1;  //목표 위 값 중 바로 번호 입력이 가능한 최소값
+    while(!isPsb(lmts,up_n)){  //바로 번호 입력이 불가능한 동안 증가(언젠가 됨)
+        ++up_n;  
+    }
+    int cnt=to_string(up_n).size()+up_n-tgt;  //이동하기 위한 횟수 계산
+    ans=cnt<ans?cnt:ans;  //더 작은 횟수로 저장
+
+    cout<<ans;  //결과 출력-종료
     return 0;
 }
