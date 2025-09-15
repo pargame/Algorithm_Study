@@ -7,8 +7,8 @@
 
 using namespace std;
 
-vector<int> GetCands(vector<int>const&possibles,int const&n){
-
+vector<int> GetCands(vector<int> possibles,int const n){
+    sort(possibles.begin(),possibles.end(),[]())
 }
 
 int main(){
