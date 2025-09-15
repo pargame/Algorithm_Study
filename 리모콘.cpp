@@ -39,6 +39,11 @@ int main(){
         cout<<ans;
         return 0;
     }
+    else if(lmt_n==0){  //제한 번호 없을 때 즉시 계산 후 출력-종료
+        ans=to_string(tgt).size()<ans?to_string(tgt).size():ans;
+        cout<<ans;
+        return 0;
+    }
 
     //이후는 100번이 아니며, 최소 1개 제한되지 않은 번호가 있는 경우임
     vector<int> lmts;  //제한 번호 목록
@@ -46,6 +51,7 @@ int main(){
         int __=0; cin>>__;
         lmts.push_back(__);
     }
+    sort(lmts.begin(), lmts.end());
 
     int low_n=tgt-1;  //목표 아래 값 중 바로 번호 입력이 가능한 최대값 
     while(!isPsb(lmts,low_n) && low_n>=0){  //바로 번호 입력이 불가능한 동안 감소
@@ -57,12 +63,15 @@ int main(){
         ans=cnt<ans?cnt:ans;  //더 작은 횟수로 ans 업데이트
     } //못 찾았다면 할 작업 없음
 
-    int up_n=tgt+1;  //목표 위 값 중 바로 번호 입력이 가능한 최소값
-    while(!isPsb(lmts,up_n)){  //바로 번호 입력이 불가능한 동안 증가(언젠가 됨)
-        ++up_n;  
+    if(!(lmts.size()==9 && lmts[0]==1)){  //0만 가능한데, 못 도달하여 무한루프인 경우가 아니면
+        int up_n=tgt+1;  //목표 위 값 중 바로 번호 입력이 가능한 최소값)
+
+        while(!isPsb(lmts,up_n)){  //바로 번호 입력이 불가능한 동안 증가
+            ++up_n;  
+        }
+        int cnt=to_string(up_n).size()+up_n-tgt;  //이동하기 위한 횟수 계산
+        ans=cnt<ans?cnt:ans;  //더 작은 횟수로 저장
     }
-    int cnt=to_string(up_n).size()+up_n-tgt;  //이동하기 위한 횟수 계산
-    ans=cnt<ans?cnt:ans;  //더 작은 횟수로 저장
 
     cout<<ans;  //결과 출력-종료
     return 0;
