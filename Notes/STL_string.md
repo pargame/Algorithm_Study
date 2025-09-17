@@ -38,6 +38,18 @@ std::string s(begin, end);              // 이터레이터 범위
 - `[]`: 인덱스 접근 (char&).
 - `at(size_type pos)`: 범위 체크 인덱스 접근.
 
+## 기타 (이터레이터, 헬퍼 함수 등)
+- **이터레이터**: `begin()`, `end()` 등 (순방향/역방향).
+- **헬퍼 함수**:
+  - `std::to_string(int value)`: 숫자를 문자열로 변환.
+  - `std::stoi(const std::string& str)`: 문자열을 int로 변환.
+  - `std::stol(const std::string& str)`: 문자열을 long으로 변환.
+  - `std::stoll(const std::string& str)`: 문자열을 long long으로 변환.
+  - `std::stoul(const std::string& str)`: 문자열을 unsigned long으로 변환.
+  - `std::stoull(const std::string& str)`: 문자열을 unsigned long long으로 변환.
+  - `std::stof(const std::string& str)`: 문자열을 float으로 변환.
+  - `std::stod(const std::string& str)`: 문자열을 double으로 변환.
+
 ## 사용 예시
 ```cpp
 #include <string>
