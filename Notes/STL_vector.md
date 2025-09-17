@@ -1,132 +1,69 @@
+# std::vector 알아야 할 것 정리
 
-# STL vector 초기화 방법
+`std::vector`은 `<vector>` 헤더에 정의된 동적 배열 컨테이너로, 크기를 동적으로 조절할 수 있습니다. 연속 메모리에 요소를 저장합니다.
 
-자주 쓰는 `std::vector` 초기화 패턴을 간단히 정리합니다.
+## 기본 개념
+- **동적 배열**: 크기가 자동으로 늘어남.
+- **연속 메모리**: 캐시 친화적, 임의 접근 O(1).
+- **용도**: 배열처럼 사용하지만, 크기 변경 가능.
 
-1) 기본 생성자
-
+## 생성자
 ```cpp
-std::vector<int> v; // 비어있는 벡터
+std::vector<int> v;                    // 빈 벡터
+std::vector<int> v(5);                 // 크기 5, 기본값 0
+std::vector<int> v(5, 10);             // 크기 5, 값 10
+std::vector<int> v = {1, 2, 3};        // 초기화 리스트
+std::vector<int> v(other);             // 복사 생성자
+std::vector<int> v(std::move(other));  // 이동 생성자
+std::vector<int> v(begin, end);        // 이터레이터 범위
 ```
 
-2) 크기와 값으로 초기화
+## 주요 멤버 함수
+- `size()`: 현재 요소 수.
+- `capacity()`: 할당된 메모리 크기.
+- `empty()`: 비었는지 확인.
+- `resize(size_type n)`: 크기 변경 (기본값 추가).
+- `assign(size_type n, const T& value)`: n개의 value로 벡터 채움.
+- `assign(InputIt first, InputIt last)`: 이터레이터 범위로 벡터 채움.
+- `assign(std::initializer_list<T>)`: 초기화 리스트로 벡터 채움.
+- `push_back(const T&)` / `push_back(T&&)`: 끝에 추가.
+- `pop_back()`: 끝 요소 제거.
+- `insert(const_iterator pos, const T& value)`: 위치에 값 삽입 (반환: 삽입된 요소 이터레이터).
+- `insert(const_iterator pos, T&& value)`: 이동 삽입.
+- `insert(const_iterator pos, size_type count, const T& value)`: count 개의 값 삽입.
+- `insert(const_iterator pos, InputIt first, InputIt last)`: 범위 삽입.
+- `insert(const_iterator pos, std::initializer_list<T>)`: 초기화 리스트 삽입.
+- `erase(const_iterator pos)`: 위치 요소 삭제 (반환: 삭제된 다음 요소 이터레이터).
+- `erase(const_iterator first, const_iterator last)`: 범위 삭제.
+- `clear()`: 모든 요소 제거.
+- `at(size_type pos)`: 범위 체크 인덱스 접근 (범위 초과 시 std::out_of_range 예외 던짐).
+- `front()` / `back()`: 첫/끝 요소 참조.
 
+## 연산자
+- `[]`: 인덱스 접근 (범위 체크 없음).
+- `==`, `!=`, `<`, `<=`, `>`, `>=`: 요소별 비교.
+
+## 이터레이터
+- `begin()`, `end()`: 순방향.
+- `rbegin()`, `rend()`: 역방향.
+- `cbegin()`, `cend()`: const 버전.
+
+## 사용 예시
 ```cpp
-std::vector<int> a(5);        // 크기 5, 기본값 0
-std::vector<int> b(5, 7);     // 크기 5, 모든 원소가 7
+#include <vector>
+#include <iostream>
+
+std::vector<int> v = {1, 2, 3};
+v.push_back(4);  // {1, 2, 3, 4}
+v.pop_back();    // {1, 2, 3}
+std::cout << v[0] << ", " << v.at(1);  // 1, 2
+
+for (auto& elem : v) elem *= 2;  // {2, 4, 6}
 ```
 
-3) 이니셜라이저 리스트
-
-```cpp
-std::vector<int> c = {1,2,3,4};
-std::vector<std::string> s{"a","b","c"};
-```
-
-4) 배열 또는 다른 컨테이너의 범위로 초기화
-
-```cpp
-int arr[] = {10,20,30};
-std::vector<int> d(std::begin(arr), std::end(arr));
-
-std::list<int> L = {1,2,3};
-std::vector<int> e(L.begin(), L.end());
-```
-
-5) 복사 / 이동 생성자
-
-```cpp
-std::vector<int> src = {1,2,3};
-std::vector<int> f(src);        // 복사
-std::vector<int> g(std::move(src)); // 이동 (src는 빈 상태가 될 수 있음)
-```
-
-6) assign 사용
-
-```cpp
-std::vector<int> h;
-h.assign(4, 9); // 크기 4, 모든 원소 9
-// 또는 범위 복사
-h.assign(d.begin(), d.end());
-```
-
-7) reserve / resize (용량 vs 크기)
-
-```cpp
-std::vector<int> v2;
-v2.reserve(100); // capacity를 미리 확보(크기는 변하지 않음)
-v2.resize(10);    // 크기를 10으로 설정(새 원소는 기본값으로 초기화)
-```
-
-8) push_back / emplace_back 으로 단계적 초기화
-
-```cpp
-std::vector<std::pair<int,int>> vp;
-vp.emplace_back(1,2); // 생성자를 호출해 직접 삽입
-vp.push_back({3,4});  // 임시 객체를 복사 또는 이동
-```
-
-팁 요약:
-- 정적 초기값이 있으면 이니셜라이저 리스트가 가장 간결합니다.
-- 요소 수는 정해져 있지만 값은 같다면(size,value) 생성자가 편합니다.
-- 성능상 반복 삽입 전에는 `reserve`로 capacity를 확보하세요.
-- 포인터/배열 또는 다른 컨테이너 범위로 쉽게 초기화할 수 있습니다.
-
-## 벡터의 일부 복사 (범위 복사)
-
-자주 쓰는 부분 복사 패턴입니다. 모두 반복자 기반으로 동작합니다.
-
-1) 새로운 벡터에 범위 복사 (생성자 사용)
-
-```cpp
-std::vector<int> src = {0,1,2,3,4,5,6};
-// 인덱스 2 ~ 4 (2,3,4)를 복사
-std::vector<int> part(src.begin() + 2, src.begin() + 5);
-```
-
-2) 기존 벡터에 범위 할당 (assign)
-
-```cpp
-std::vector<int> dest;
-dest.assign(src.begin() + 2, src.begin() + 5); // dest = {2,3,4}
-```
-
-3) 기존 벡터 끝에 덧붙이기 (insert 또는 std::copy + back_inserter)
-
-```cpp
-std::vector<int> dest = {10,11};
-// insert 사용
-dest.insert(dest.end(), src.begin() + 2, src.begin() + 5);
-// 또는 std::copy
-std::copy(src.begin() + 2, src.begin() + 5, std::back_inserter(dest));
-```
-
-4) 일부만 n개 복사 (`std::copy_n`)
-
-```cpp
-std::vector<int> out;
-std::copy_n(src.begin() + 3, 2, std::back_inserter(out)); // src[3], src[4]
-```
-
-5) 조건에 맞는 원소만 복사 (`std::copy_if`)
-
-```cpp
-std::vector<int> odd;
-std::copy_if(src.begin(), src.end(), std::back_inserter(odd), [](int x){ return x % 2 == 1; });
-```
-
-6) 이동(move)으로 복사(대상에 소유권 이전)
-
-```cpp
-std::vector<std::string> a = {"a","b","c","d"};
-std::vector<std::string> b;
-// a의 일부를 b로 이동
-b.insert(b.end(), std::make_move_iterator(a.begin()+1), std::make_move_iterator(a.begin()+3));
-// a[1], a[2]는 빈 문자열로 변할 수 있음
-```
-
-팁/복잡도:
-- 반복자 범위 복사는 O(n)입니다(복사 대상 원소 수에 비례).
-- 범위를 복사할 때는 인덱스/범위가 유효한지(범위를 벗어나지 않는지) 확인하세요. 특히 빈 벡터나 경계값을 조심합니다.
-- `reserve`를 사용하면 반복 삽입(insert/back_inserter/std::copy) 시 재할당을 줄여 성능을 개선할 수 있습니다.
-
+## 주의사항
+- `[]` vs `at()`: `at()`은 out_of_range 예외, `[]`는 정의되지 않은 동작.
+- 재할당: push_back 시 capacity 초과하면 전체 복사 (비효율).
+- reserve() 사용: 빈번한 크기 변경 시 미리 용량 할당.
+- 메모리: 연속이라 캐시 효율 좋음, 하지만 큰 객체는 deque 고려.
+- 스레드 안전: 표준 라이브러리는 스레드 안전하지 않음.

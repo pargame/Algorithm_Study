@@ -1,58 +1,62 @@
+# std::pair 알아야 할 것 정리
 
-# std::pair 간단 사용법 및 임시 객체 생성
+`std::pair`은 `<utility>` 헤더에 정의된 클래스 템플릿으로, 두 개의 값을 하나의 객체로 묶어 관리합니다. 맵, 튜플 등에서 자주 사용됩니다.
 
-`std::pair`는 두 값(또는 객체)를 한 쌍으로 묶는 유틸리티입니다. 아래는 임시(pair) 객체를 만드는 여러 방법과 `pair<int, std::vector<int>>`처럼 중첩 컨테이너를 만들 때 자주 쓰는 패턴입니다.
+## 기본 개념
+- **두 값 저장**: `first`와 `second` 멤버로 접근.
+- **템플릿**: `std::pair<T1, T2>` 형태.
+- **용도**: 관련된 두 값을 함께 반환하거나 저장할 때 유용.
 
-1) 중괄호 초기화(간단하고 직관적)
-
+## 생성자
 ```cpp
-std::pair<int, std::vector<int>> p1 = {1, {2, 3}}; // 두번째 요소는 std::vector<int>{2,3}으로 생성되어 이동
-// 또는
-auto p2 = std::pair<int, std::vector<int>>{1, {4,5,6}};
+std::pair<int, std::string> p;                    // 기본 생성자 (기본값)
+std::pair<int, std::string> p(1, "hello");       // 값 생성자
+std::pair<int, std::string> p = {1, "hello"};    // 초기화 리스트
+std::pair<int, std::string> p(other);            // 복사 생성자
+std::pair<int, std::string> p(std::move(other)); // 이동 생성자
 ```
 
-2) std::make_pair 사용
+## 주요 멤버
+- `first`: 첫 번째 값 (T1 타입).
+- `second`: 두 번째 값 (T2 타입).
 
+## 헬퍼 함수
+- `std::make_pair(T1, T2)`: pair 생성 (타입 추론).
+  ```cpp
+  auto p = std::make_pair(1, "hello");  // std::pair<int, const char*>
+  ```
+- `std::tie`: 구조적 바인딩 전 C++11 방식.
+  ```cpp
+  int a; std::string b;
+  std::tie(a, b) = p;  // p의 first/second를 a, b에 할당
+  std::tie(std::ignore, b) = p;  // first 무시
+  ```
+
+## 비교 연산자
+- `==`, `!=`: 요소별 비교.
+- `<`, `<=`, `>`, `>=`: 사전순 비교 (first 먼저, 같으면 second).
+
+## 사용 예시
 ```cpp
-auto p3 = std::make_pair(1, std::vector<int>{7,8});
-// make_pair는 타입을 유추해주며, 임시 벡터는 이동됩니다.
+#include <utility>
+#include <iostream>
+
+std::pair<int, std::string> p = {1, "hello"};
+std::cout << p.first << ", " << p.second;  // 1, hello
+
+// make_pair
+auto q = std::make_pair(2, "world");
+
+// tie
+int x; std::string y;
+std::tie(x, y) = q;  // x=2, y="world"
+
+// 구조적 바인딩 (C++17)
+auto [a, b] = p;  // a=1, b="hello"
 ```
 
-3) 생성자 직접 호출 (명시적)
-
-```cpp
-std::pair<int, std::vector<int>> p4(1, std::vector<int>{9,10});
-```
-
-4) C++17 CTAD (Class Template Argument Deduction)을 이용한 더 간결한 표기 (컴파일러가 템플릿 인자를 유추)
-
-```cpp
-std::pair p5 = {1, std::vector<int>{11,12}}; // C++17 이상
-```
-
-5) 컨테이너(예: std::vector<std::pair<...>> )에 바로 삽입/생성
-
-```cpp
-std::vector<std::pair<int,std::vector<int>>> vp;
-// 복사/이동으로 삽입
-vp.push_back(std::make_pair(1, std::vector<int>{1,2}));
-// 또는 in-place 생성(불필요한 복사 없이 생성)
-vp.emplace_back(2, std::vector<int>{3,4});
-// emplace_back은 pair의 생성자에 인자를 전달하므로 두번째 인자는 std::vector<int>{...}로 명시하는 것이 안전
-```
-
-6) 이동을 이용해 비용 줄이기
-
-```cpp
-std::vector<int> big = /* 큰 데이터 */ {100,101,102};
-auto p6 = std::make_pair(42, std::move(big)); // big는 비워짐(moved-from)
-```
-
-팁과 주의사항:
-- 중첩 컨테이너의 경우 `{1, {2,3}}` 같은 중괄호 초기화가 직관적이고 보통 잘 동작합니다. 생성자가 모호해지는 경우에는 `std::vector<int>{2,3}` 처럼 타입을 명시하면 안전합니다.
-- `emplace_back`은 내부에서 직접 생성하므로 불필요한 복사를 줄여 성능상 유리합니다. 다만 벡터의 두번째 인자를 중괄호로만 쓰면 컴파일러가 모호하다고 할 수 있으니 `std::vector<int>{...}` 형태로 명시하는 습관이 안전합니다.
-- 이동(`std::move`)을 이용하면 큰 컨테이너를 복사하지 않고 소유권을 이전할 수 있습니다. 이동한 원본은 사용 전에 상태를 확인하세요.
-- C++20 이후에는 구조적 바인딩이나 CTAD로 더 간결하게 쓸 수 있습니다.
-
-간단 요약: 임시 `pair<int, vector<int>>`는 중괄호 초기화, `make_pair`, 생성자 직접 호출, CTAD, `emplace_back` 등 다양한 방법으로 만들 수 있고, 큰 컨테이너는 `std::move`로 이동시키면 비용을 줄일 수 있습니다.
-
+## 주의사항
+- 타입 불일치: make_pair는 const char*가 std::string으로 변환될 수 있음.
+- 비교: 사용자 정의 타입은 operator< 필요.
+- C++11 전: tie로 구조적 바인딩 대체.
+- 메모리: 작은 객체에 적합, 큰 객체는 tuple 고려.
