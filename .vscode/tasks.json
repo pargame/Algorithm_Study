@@ -1,0 +1,48 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: clang++ 활성 파일 빌드",
+            "command": "/usr/bin/clang++",
+            // 빌드 명령 인수(클래식 JSON에서 주석 불가하지만 VS Code는 JSONC를 허용합니다)
+            "args": [
+                // C++ 표준: C++23로 컴파일
+                "-std=c++23",
+                // 일반 경고 활성화
+                "-Wall",
+                // 추가 경고 활성화
+                "-Wextra",
+                // 더 엄격한 표준 준수 경고
+                "-Wpedantic",
+                // 컬러 진단(경고/오류) 출력
+                "-fcolor-diagnostics",
+                // ANSI 이스케이프 코드를 허용 (터미널 색상/스타일)
+                "-fansi-escape-codes",
+                // 디버깅 심볼 포함 (-g)
+                "-g",
+                // '${file}'는 VS Code에서 현재 활성화된 파일 경로로 치환됩니다
+                "${file}",
+                // 출력 옵션: 다음 인수로 실행 파일 경로를 지정
+                "-o",
+                // 빌드 산출물(실행 파일)을 워크스페이스의 bin 폴더에 저장
+                "${workspaceFolder}/bin/${fileBasenameNoExtension}"
+            ],
+            // 작업 옵션: 실행 시 작업 디렉토리를 현재 파일의 폴더로 설정
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            // 문제 매처: 빌드 출력에서 gcc 스타일 경고/오류를 파싱해 Problems 패널에 표시
+            "problemMatcher": [
+                "$gcc"
+            ],
+            // 그룹 설정: 빌드 그룹에 넣고, 기본 빌드 작업으로 설정 (Ctrl+Shift+B로 실행 가능)
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            // 작업 설명: VS Code에서 표시되는 세부 정보
+            "detail": "디버거에서 생성된 작업입니다."
+        }
+    ],
+    "version": "2.0.0"
+}
