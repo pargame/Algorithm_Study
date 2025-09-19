@@ -1,69 +1,39 @@
 // https://www.acmicpc.net/problem/3109
-#include <algorithm>
 #include <iostream>
-#include <queue>
-#include <stack>
 #include <vector>
+#include <stack>
 
 using namespace std;
 
-int R, C;
-vector<vector<char>> grid;
-vector<vector<bool>> visited;
-
-bool find_path_iterative(int start_x) {
-  struct Frame
-  {
-    int x;
-    int y;
-    int next;
-  };
-  int dirs[3] = { -1, 0, 1 };
-  stack<Frame> st;
-  st.push({ start_x, 0, 0 });
-  visited[start_x][0] = true;
-
-  while (!st.empty()) {
-    Frame& f = st.top();
-    int x = f.x;
-    int y = f.y;
-    if (y == C - 1)
-      return true;
-    if (f.next < 3) {
-      int dx = dirs[f.next++];
-      int nx = x + dx;
-      int ny = y + 1;
-      if (nx >= 0 && nx < R && ny < C && grid[nx][ny] == '.' &&
-        !visited[nx][ny]) {
-        visited[nx][ny] = true; // mark when pushing (match recursive behavior)
-        st.push({ nx, ny, 0 });
-      }
-    }
-    else st.pop();
-
-  }
-  return false;
-}
-
 int main() {
-  cin >> R >> C;
-  grid.assign(R, vector<char>(C));
-  for (int i = 0; i < R; ++i) {
-    for (int j = 0; j < C; ++j) {
-      cin >> grid[i][j];
+    int R = 0, C = 0; cin >> R >> C;
+    vector<vector<char>> grid(R, vector<char>(C));
+    for (vector<char>& arr : grid) {
+        for (char& cell : arr) {
+            cin >> cell;
+        }
     }
-  }
 
-  visited.assign(R, vector<bool>(C, false));
-  int count = 0;
-
-  // 위쪽 행부터 시작해서 그리디하게 파이프 설치
-  for (int i = 0; i < R; ++i) {
-    if (grid[i][0] == '.' && !visited[i][0] && find_path_iterative(i)) {
-      count++;
+    int ans = 0;
+    for (int si = 0;si < R;++si) {
+        int i = si, j = 0;
+        for (;j < C - 1;) {
+            int nj = j + 1;
+            for (int di : {-1, 0, 1}) {
+                int ni = i + di;
+                if (0 <= ni && ni < R && 0 <= nj && nj < C && grid[ni][nj] == '.') {
+                    i = ni, j = nj;
+                    grid[i][j] = 'X';
+                    break;
+                }
+            }
+            if (j < nj) break;
+        }
+        if (j == C - 1)
+            ++ans;
     }
-  }
 
-  cout << count;
-  return 0;
+    cout << ans;
+
+    return 0;
 }

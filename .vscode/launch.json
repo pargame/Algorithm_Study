@@ -21,7 +21,10 @@
       // 워크스페이스의 tasks.json에 정의된 빌드 작업 이름과 일치해야 함
       "preLaunchTask": "C/C++: clang++ 활성 파일 빌드",
       // 엔트리에서 멈출지 여부 (true면 프로그램 시작 직후 중단)
-      "stopOnEntry": false
+      "stopOnEntry": true,
+      // 디버거가 사용할 콘솔: 'integratedTerminal'로 설정하면 VS Code 통합 터미널에서 실행
+      // 이렇게 하면 프로그램이 터미널에서 입력을 받을 수 있습니다.
+      "console": "integratedTerminal"
     }
   ]
 }
