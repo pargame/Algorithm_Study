@@ -4,8 +4,8 @@
 #include<numeric>
 #include<queue>
 #include<stack>
-#include<iostream>
-#include<format>
+//#include<iostream>
+//#include<format>
 
 using namespace std;
 
@@ -41,17 +41,24 @@ bool isPsb(int M) {
     }
     int cur_k = 1;
     while(!st.empty()) {
+        //cout << format("st.top:{}\n", st.top());
+        //cout << format("lidx: {},    ridx: {}\n", links[st.top()][0], links[st.top()][1]);
+
+
         int left_total = GetTotal(links[st.top()][0], links);
         int right_total = GetTotal(links[st.top()][1], links);
+        //cout << format("Left_total:{}    R_total:{}\n", left_total, right_total);
 
         //불가능 할 때
         if(::nums[st.top()] + left_total + right_total > M) {
             //그룹 수가 오버하면 바로 false 리턴
+            //cout << format("k:{}  cur_k:{}", k, cur_k);
             if(cur_k == k) return false;
             //그룹 수 증가
             ++cur_k;
             //자식 중 서브트리 합이 큰 자식과 연결을 끊음
             left_total < right_total ? links[st.top()][1] = -1 : links[st.top()][0] = -1;
+            continue;
         }
         st.pop();
     }
@@ -59,8 +66,8 @@ bool isPsb(int M) {
 }
 
 int solution(int k, vector<int> nums, vector<vector<int>> links) {
-    ::nums = move(nums);
-    ::links = move(links);
+    ::nums = std::move(nums);
+    ::links = std::move(links);
     vector<bool>vst(::nums.size());
     for(int i = 0; i < vst.size(); ++i) {
         if(::links[i][0] != -1) vst[::links[i][0]] = true;
@@ -74,6 +81,7 @@ int solution(int k, vector<int> nums, vector<vector<int>> links) {
     int ans = R;
     while(L <= R) {
         int M = (L + R) / 2;
+        //cout << format("\n==========M:{}===========\n", M);
         if(isPsb(M)) {
             ans = M;
             R = M - 1;
@@ -84,34 +92,34 @@ int solution(int k, vector<int> nums, vector<vector<int>> links) {
     return ans;
 }
 
-int main() {
-    // 테스트 1
-    {
-        int k = 3;
-        vector<int> nums = { 12, 30, 1, 8, 8, 6, 20, 7, 5, 10, 4, 1 };
-        vector<vector<int>> links = { {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {8, 5}, {2, 10}, {3, 0}, {6, 1}, {11, -1}, {7, 4}, {-1, -1}, {-1, -1} };
-        cout << "Test 1: \n" << solution(k, nums, links) << " (expected: 40)" << endl;
-    }
-    // 테스트 2
-    {
-        int k = 1;
-        vector<int> nums = { 6, 9, 7, 5 };
-        vector<vector<int>> links = { {-1, -1}, {-1, -1}, {-1, 0}, {2, 1} };
-        cout << "Test 2: \n" << solution(k, nums, links) << " (expected: 27)" << endl;
-    }
-    // 테스트 3
-    {
-        int k = 2;
-        vector<int> nums = { 6, 9, 7, 5 };
-        vector<vector<int>> links = { {-1, -1}, {-1, -1}, {-1, 0}, {2, 1} };
-        cout << "Test 3: \n" << solution(k, nums, links) << " (expected: 14)" << endl;
-    }
-    // 테스트 4
-    {
-        int k = 4;
-        vector<int> nums = { 6, 9, 7, 5 };
-        vector<vector<int>> links = { {-1, -1}, {-1, -1}, {-1, 0}, {2, 1} };
-        cout << "Test 4: \n" << solution(k, nums, links) << " (expected: 9)" << endl;
-    }
-    return 0;
-}
+// int main() {
+//     // 테스트 1
+//     {
+//         int k = 3;
+//         vector<int> nums = { 12, 30, 1, 8, 8, 6, 20, 7, 5, 10, 4, 1 };
+//         vector<vector<int>> links = { {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {8, 5}, {2, 10}, {3, 0}, {6, 1}, {11, -1}, {7, 4}, {-1, -1}, {-1, -1} };
+//         cout << "Test 1: \n" << solution(k, nums, links) << " (****************expected: 40)" << endl;
+//     }
+//     // 테스트 2
+//     {
+//         int k = 1;
+//         vector<int> nums = { 6, 9, 7, 5 };
+//         vector<vector<int>> links = { {-1, -1}, {-1, -1}, {-1, 0}, {2, 1} };
+//         cout << "Test 2: \n" << solution(k, nums, links) << " (*****************expected: 27)" << endl;
+//     }
+//     //테스트 3
+//     {
+//         int k = 2;
+//         vector<int> nums = { 6, 9, 7, 5 };
+//         vector<vector<int>> links = { {-1, -1}, {-1, -1}, {-1, 0}, {2, 1} };
+//         cout << "\n\n\nTest 3: \n" << solution(k, nums, links) << " (**************expected: 14)" << endl;
+//     }
+//     // 테스트 4
+//     {
+//         int k = 4;
+//         vector<int> nums = { 6, 9, 7, 5 };
+//         vector<vector<int>> links = { {-1, -1}, {-1, -1}, {-1, 0}, {2, 1} };
+//         cout << "Test 4: \n" << solution(k, nums, links) << "******************** (expected: 9)" << endl;
+//     }
+//     return 0;
+// }
