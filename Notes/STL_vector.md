@@ -22,6 +22,7 @@ std::vector<int> v(begin, end);        // 이터레이터 범위
 - `size()`: 현재 요소 수.
 - `capacity()`: 할당된 메모리 크기.
 - `empty()`: 비었는지 확인.
+- `reserve(size_type n)`: 최소 n개의 요소를 저장할 수 있도록 메모리를 예약합니다. capacity를 늘리지만 size는 변경하지 않습니다. 빈번한 push_back 등으로 인한 재할당을 방지하여 성능을 향상시킬 수 있습니다.
 - `resize(size_type n)`: 크기 변경 (기본값 추가).
 - `assign(size_type n, const T& value)`: n개의 value로 벡터 채움.
 - `assign(InputIt first, InputIt last)`: 이터레이터 범위로 벡터 채움.

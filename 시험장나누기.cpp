@@ -18,7 +18,6 @@ int solution(int k, vector<int> num, vector<vector<int>> link) {
             prnt[child_idx] = i;
             child[i].push_back(child_idx);
         }
-        sort(child[i].begin(), child[i].end());
     }
     int root_idx = find(prnt.begin(), prnt.end(), -1) - prnt.begin();
 
@@ -36,42 +35,38 @@ int solution(int k, vector<int> num, vector<vector<int>> link) {
         st.pop();
     }
 
+
     auto isPsb = [&](int const &M)mutable ->bool {
-        // cout << "==========M: " << M << "==========\n";
-        if(sum[root_idx] <= M) return true;
-
-        vector<int> local_sum = sum;
         int cur_k = 1;
+        vector<int> local_sum = num;
+
         stack<pair<int, int>> st;
-        st.push({ root_idx, child[root_idx].size() - 1 });
+        st.push({ root_idx, 0 });
         while(!st.empty()) {
-            // cout << "cur_idx: " << st.top().first << ", cur_sum: " << local_sum[st.top().first] << endl;
-
-            //자식을 자를 필요가 없다면 바로 팝
-            if(local_sum[st.top().first] <= M) {
-                st.pop();
+            auto &[node_idx, child_pos] = st.top();
+            if(child_pos < (int)child[node_idx].size()) {
+                int child_idx = child[node_idx][child_pos++];
+                st.push({ child_idx, 0 });
+                continue;
             }
-            //내 second에 자식이 있고, 그 자식의 sum이 M보다 크면 푸시
-            else if(st.top().second >= 0
-                && local_sum[child[st.top().first][st.top().second--]] > M) {
-                st.push({ child[st.top().first][st.top().second + 1]
-                    , child[child[st.top().first][st.top().second + 1]].size() - 1 });
-            }
-            else {
-                ++cur_k;
-                if(cur_k > k)
-                    return false;
-                int max_child_sum = local_sum[child[st.top().first][0]];
+            if(!child[node_idx].empty()) {
+                vector<int> child_sums;
+                for(int c : child[node_idx]) child_sums.push_back(local_sum[c]);
+                sort(child_sums.begin(), child_sums.end());
 
-                int p = st.top().first;
-                while(p != -1) {
-                    local_sum[p] -= local_sum[child[st.top().first].back()];
-                    p = prnt[p];
+                for(int child_sum : child_sums) {
+                    if(local_sum[node_idx] + child_sum <= M) {
+                        local_sum[node_idx] += child_sum;
+                    }
+                    else {
+                        ++cur_k;
+                        if(cur_k > k) return false;
+                    }
                 }
             }
+            st.pop();
         }
-
-        return true;
+        return cur_k <= k;
         };
 
 
