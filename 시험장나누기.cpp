@@ -25,7 +25,15 @@ int solution(int k, vector<int> num, vector<vector<int>> link) {
         }
     }
 
+    auto isPsb = [&](int const &M)->bool {
+        struct Frame {
+            int idx;
+            int vst_state;
 
+        }
+
+        return true;
+        };
 
 
 
@@ -34,7 +42,7 @@ int solution(int k, vector<int> num, vector<vector<int>> link) {
     int ans = L;
     while(L <= R) {
         int M = (L + R) / 2;
-        if(isPsb()) {
+        if(isPsb(M)) {
             ans = M;
             R = M - 1;
         }
