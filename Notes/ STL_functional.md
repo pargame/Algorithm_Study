@@ -36,12 +36,14 @@ struct Functor {
 - **std::ref/std::cref**: 참조 래퍼, std::bind에서 참조 전달.
 - **std::mem_fn**: 멤버 함수를 함수 객체로 변환.
 - **std::not_fn**: 함수 객체의 부정.
+- **std::greater/std::less**: 비교 함수 객체, a > b 또는 a < b 반환 (priority_queue 등에서 사용).
 - **람다 활용**: 람다를 std::function으로 래핑하거나 std::bind와 결합.
 
 ## 사용 예시
 ```cpp
 #include <functional>
 #include <iostream>
+#include <queue>
 
 void func(int a, int b) {
     std::cout << a + b << std::endl;
@@ -59,6 +61,12 @@ int main() {
     // 함수 객체
     Functor fn;
     std::cout << fn(3) << std::endl;  // 4
+
+    // std::greater로 min-heap priority_queue
+    std::priority_queue<int, std::vector<int>, std::greater<int>> pq;
+    pq.push(10);
+    pq.push(5);
+    std::cout << pq.top() << std::endl;  // 5 (작은 값이 top)
 }
 ```
 

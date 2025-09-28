@@ -25,7 +25,8 @@
 - `pow(base, exponent)`: base의 exponent 거듭제곱을 반환합니다.
 
 ### 절대값 및 반올림 (Absolute Value and Rounding)
-- `fabs(x)`: x의 절대값을 반환합니다.
+- `abs(x)`: x의 절대값을 반환합니다. (정수형 및 부동소수점형 모두 지원, C++11부터)
+- `fabs(x)`: x의 절대값을 반환합니다. (주로 double형에 사용)
 - `ceil(x)`: x보다 크거나 같은 가장 작은 정수를 반환합니다. (올림)
 - `floor(x)`: x보다 작거나 같은 가장 큰 정수를 반환합니다. (내림)
 - `round(x)`: x를 가장 가까운 정수로 반올림합니다.
@@ -45,6 +46,8 @@ int main() {
     std::cout << "sqrt(16): " << sqrt(16.0) << std::endl;      // 출력: 4
     std::cout << "pow(2, 3): " << pow(2.0, 3.0) << std::endl; // 출력: 8
     std::cout << "log(10): " << log(10.0) << std::endl;        // 출력: 약 2.302
+    std::cout << "abs(-5): " << abs(-5) << std::endl;          // 출력: 5 (정수형)
+    std::cout << "fabs(-3.14): " << fabs(-3.14) << std::endl;  // 출력: 3.14 (부동소수점형)
     
     return 0;
 }
@@ -57,3 +60,4 @@ int main() {
 - **오버플로우**: 큰 값 연산 시 오버플로우 가능성 있음.
 - **상수**: `M_PI`(π), `M_E`(e) 등은 표준이 아니므로, `<numbers>` 헤더( C++20)나 직접 정의 권장.
 - **스레드 안전**: 대부분의 함수는 스레드 안전합니다.
+- **abs vs fabs**: `abs`는 범용적(정수/부동소수점 모두), `fabs`는 주로 부동소수점에 특화. 정수형 절대값에는 `abs`를 선호.
