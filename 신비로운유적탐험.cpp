@@ -8,6 +8,7 @@
 #include <queue>
 #include <algorithm>
 #include <stack>
+#include <iostream>
 
 using namespace std;
 
@@ -28,49 +29,13 @@ void MakeTree(vector<vector<int>> &t, vector<vector<int>>const &g, int n) {
     }
 }
 
-void SetDP(int i1, int i2, vector<vector<int>> &dp
-    , vector<vector<int>>const &t1, vector<vector<int>>const &t2) {
-    if(t1[i1].size() == 0 || t2[i2].size() == 0) {
-        dp[i1][i2] = 1;
-        return;
-    }
-
-    vector<vector<int>> sub_dp(t1[i1].size(), vector<int>(t2[i2].size()));
-    for(int c1 = 0; c1 < t1[i1].size(); ++c1) {
-        for(int c2 = 0; c2 < t2[i2].size(); ++c2) {
-            sub_dp[c1][c2] = dp[t1[i1][c1]][t2[i2][c2]];
-        }
-    }
-
-
-
-}
-
 int GetAns(vector<vector<int>>const &t1, vector<vector<int>>const &t2) {
-    int ans = 0;
+    struct Frame {
+        int i1, i2;
+        int ncj1 = 0, ncj2 = 0;
+        Frame(int _i1, int _i2) :i1(_i1), i2(_i2) {}
+    };
 
-    stack<pair<int, int>> st;
-    queue<pair<int, int>> q;
-    q.push({ 1,1 });
-    while(!q.empty()) {
-        st.push(q.front());
-        q.pop();
-        for(int c1 : t1[st.top().first]) {
-            for(int c2 : t2[st.top().second]) {
-                q.push({ c1,c2 });
-            }
-        }
-    }
-
-    vector<vector<int>> dp(t1.size() + 1, vector<int>(t2.size() + 1));
-    while(!st.empty()) {
-        int i1 = st.top().first, i2 = st.top().second;
-        st.pop();
-        SetDP(i1, i2, dp, t1, t2);
-    }
-
-
-    return ans;
 }
 
 int solution(int n1, vector<vector<int>> g1, int n2, vector<vector<int>> g2) {
