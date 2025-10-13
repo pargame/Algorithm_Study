@@ -29,13 +29,92 @@ void MakeTree(vector<vector<int>> &t, vector<vector<int>>const &g, int n) {
     }
 }
 
+void SetDP(int i1, int i2
+    , vector<vector<int>>const &t1, vector<vector<int>>const &t2
+    , vector<vector<int>> &dp) {
+
+    if(t1[i1].empty() || t2[i2].empty()) return;
+
+    struct Frame {
+        int i;
+        int cnt = 0;
+        Frame(int _i) : i(_i) {}
+    };
+
+    int max_v = 1;
+
+    //n<m
+    bool bswap = t1[i1].size() > t2[i2].size() ? true : false;
+    int n = bswap ? t2[i2].size() : t1[i1].size();
+    int m = bswap ? t1[i1].size() : t2[i2].size();
+
+    vector<Frame> st;
+    for(int i = 0; i < m; ++i) {
+        st.push_back(Frame(i));
+        vector<bool>vst(m);
+
+        while(!st.empty()) {
+            vst[st.back().i] = true;
+            if(st.size() == n) {
+                int sum = 0;
+                for(int j = 0; j < n; ++j) {
+                    int ii = bswap ? t1[i1][st[j].i] : t1[i1][j];
+                    int jj = bswap ? t2[i2][j] : t2[i2][st[j].i];
+                    sum += dp[ii][jj];
+                }
+                max_v = max(max_v, sum);
+                vst[st.back().i] = false;
+                st.pop_back();
+                continue;
+            }
+            int next = -1;
+            for(int j = 0, cnt = 0; j < m; ++j) {
+                if(!vst[j]) {
+                    if(cnt == st.back().cnt) {
+                        next = j;
+                        break;
+                    }
+                    ++cnt;
+                }
+            }
+            if(next != -1) {
+                ++st.back().cnt;
+                st.push_back(Frame(next));
+            }
+            else {
+                vst[st.back().i] = false;
+                st.pop_back();
+            }
+        }
+    }
+
+    dp[i1][i2] += max_v;
+}
+
 int GetAns(vector<vector<int>>const &t1, vector<vector<int>>const &t2) {
     struct Frame {
         int i1, i2;
-        int ncj1 = 0, ncj2 = 0;
+        int j1 = 0, j2 = 0;
         Frame(int _i1, int _i2) :i1(_i1), i2(_i2) {}
     };
 
+    vector<vector<int>> dp(t1.size() + 1, vector<int>(t2.size() + 1, 1)); //초기값 1
+    stack<Frame> st;
+    st.push(Frame(1, 1));
+    while(!st.empty()) {
+        if(st.top().j1 < t1[st.top().i1].size() && st.top().j2 < t2[st.top().i2].size()) {
+            st.push(Frame(st.top().j1, st.top().j2++));
+        }
+        else if(st.top().j1 < t1[st.top().i1].size()) {
+            ++st.top().j1;
+            st.top().j2 = 0;
+        }
+        else {
+            SetDP(st.top().i1, st.top().i2, t1, t2, dp);
+            st.pop();
+        }
+    }
+    return dp[1][1];
 }
 
 int solution(int n1, vector<vector<int>> g1, int n2, vector<vector<int>> g2) {
