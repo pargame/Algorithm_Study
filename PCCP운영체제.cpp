@@ -8,10 +8,41 @@
 // a, b쌍이 중복되는 프로그램은 입력으로 주어지지 않습니다. 즉, 호출된 시각이 같으면서 점수도 같은 프로그램은 없습니다.
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <queue>
 
 using namespace std;
 
 vector<long long> solution(vector<vector<int>> program) {
-    vector<long long> answer;
+    vector<long long> answer(11);
+    struct Cmp {
+        bool operator()(vector<int>const &a, vector<int>const &b) {
+            if(a[1] == b[1]) return a[0] > b[0];
+            return a[1] > b[1];
+        }
+    };
+    priority_queue<vector<int>, vector<vector<int>>, Cmp> pq;
+    for(vector<int> p : program) {
+        pq.push(p);
+    }
+
+    int cur_t = 0;
+    while(true) {
+        struct CmpS {
+            bool operator()(vector<int>const &a, vector<int>const &b) {
+                return a[0] > b[0];
+            }
+        };
+        priority_queue<vector<int>, vector<vector<int>>, CmpS> pqs;
+
+
+
+
+
+        if(pq.empty()) break;
+    }
+
+
+
     return answer;
 }
