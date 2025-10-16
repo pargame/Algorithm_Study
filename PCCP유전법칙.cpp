@@ -6,81 +6,61 @@
 // 1 ≤ p ≤ 4n-1
 #include <string>
 #include <vector>
-#include <queue>
+#include <stack>
 #include <algorithm>
 
 using namespace std;
 
 struct Frame {
-    int cur = 0;  //RR:0/Rr·rR:1/rr:2
-    int level = 0;
-    int n = 0;
+    int n, p;
+    Frame(int _n, int _p) :n(_n), p(_p) {}
 };
 
-vector<int> lv_cnt(17);
-
 vector<string> solution(vector<vector<int>> queries) {
-    sort(queries.begin(), queries.end(), [](auto const &a, auto const &b) {
-        if(a[0] == b[0]) return a[1] < b[1];
-        return a[0] < b[0];
-        });
-    queue<Frame>q;
-    q.push(Frame());
-    q.front().cur = 1;
-    q.front().level = 1;
-    q.front().n = 1;
-    lv_cnt[1] = 1;
-    int cnt = 0;
     vector<string> ans;
-    while(cnt < queries.size()) {
-        Frame top = q.front();
 
-        if(top.level == queries[cnt][0] && top.n == queries[cnt][1]) {
-            if(top.cur == 0) {
-                ans.push_back("RR");
+    for(vector<int> &q : queries) {
+        int n = q[0], p = q[1];
+
+        stack<Frame> st;
+        st.push(Frame(n, p));
+        int prev_v = 0; //1-RR      2-Rr    3-rr
+        while(!st.empty()) {
+            if(st.top().n == 1) {
+                prev_v = 2;
+                st.pop();
             }
-            else if(top.cur == 1) {
-                ans.push_back("Rr");
+            else if(prev_v != 0) {
+                switch(prev_v) {
+                case 1:
+                    prev_v = 1;
+                    break;
+                case 2:
+                    switch(st.top().p % 4) {
+                    case 1:
+                        prev_v = 1;
+                        break;
+                    case 2:
+                    case 3:
+                        prev_v = 2;
+                        break;
+                    case 0:
+                        prev_v = 3;
+                        break;
+                    }
+                    break;
+                case 3:
+                    prev_v = 3;
+                    break;
+                }
+                st.pop();
             }
             else {
-                ans.push_back("rr");
-            }
-            ++cnt;
-            continue;
-        }
-
-        q.pop();
-
-
-        if(top.cur == 0) {
-            for(int i : {0, 0, 0, 0}) {
-                Frame next;
-                next.cur = 0;
-                next.level = top.level + 1;
-                next.n = ++lv_cnt[next.level];
-                q.push(next);
+                st.push(Frame(st.top().n - 1, (st.top().p + 3) / 4));
             }
         }
-        else if(top.cur == 1) {
-            Frame next1, next2, next3, next4;
-            next1.cur = 0, next1.level = top.level + 1, next1.n = ++lv_cnt[next1.level];
-            next2.cur = 1, next2.level = top.level + 1, next2.n = ++lv_cnt[next2.level];
-            next3.cur = 1, next3.level = top.level + 1, next3.n = ++lv_cnt[next3.level];
-            next4.cur = 2, next4.level = top.level + 1, next4.n = ++lv_cnt[next4.level];
-            q.push(next1);
-            q.push(next2);
-            q.push(next3);
-            q.push(next4);
-        }
-        else {
-            for(int i : {0, 0, 0, 0}) {
-                Frame next;
-                next.cur = 2;
-                next.level = top.level + 1;
-                next.n = ++lv_cnt[next.level];
-                q.push(next);
-            }
-        }
+        ans.push_back(prev_v == 1 ? "RR" : prev_v == 2 ? "Rr" : "rr");
     }
+
     return ans;
 }
