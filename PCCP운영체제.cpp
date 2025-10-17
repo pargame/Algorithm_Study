@@ -14,35 +14,48 @@
 using namespace std;
 
 vector<long long> solution(vector<vector<int>> program) {
-    vector<long long> answer(11);
+    vector<long long> ans(11);
     struct Cmp {
-        bool operator()(vector<int>const &a, vector<int>const &b) {
+        bool operator()(vector<int> const &a, vector<int> const &b) const {
             if(a[1] == b[1]) return a[0] > b[0];
             return a[1] > b[1];
         }
     };
     priority_queue<vector<int>, vector<vector<int>>, Cmp> pq;
-    for(vector<int> p : program) {
+
+    for(const auto &p : program) {
         pq.push(p);
     }
 
-    int cur_t = 0;
-    while(true) {
-        struct CmpS {
-            bool operator()(vector<int>const &a, vector<int>const &b) {
-                return a[0] > b[0];
-            }
-        };
-        priority_queue<vector<int>, vector<vector<int>>, CmpS> pqs;
+    struct CmpS {
+        bool operator()(vector<int> const &a, vector<int> const &b) const {
+            if(a[0] == b[0]) return a[1] > b[1];
+            return a[0] > b[0];
+        }
+    };
+    priority_queue<vector<int>, vector<vector<int>>, CmpS> pqs;
 
+    long long cur_t = 0;
 
+    while(!pq.empty() || !pqs.empty()) {
+        // 현재 시간에 실행 가능한 프로그램을 pqs에 저장
+        while(!pq.empty() && pq.top()[1] <= cur_t) {
+            pqs.push(pq.top());
+            pq.pop();
+        }
 
-
-
-        if(pq.empty()) break;
+        if(!pqs.empty()) {
+            // 대기 시간 = 실행 시작 시각 - 호출 시각
+            ans[pqs.top()[0]] += cur_t - pqs.top()[1];
+            cur_t += pqs.top()[2]; // 실행 시간만큼 증가
+            pqs.pop();
+        }
+        else if(!pq.empty()) {
+            // pqs가 비었으면 다음 프로그램 시각으로 점프
+            cur_t = pq.top()[1];
+        }
     }
 
-
-
-    return answer;
+    ans[0] = cur_t;
+    return ans;
 }
