@@ -17,9 +17,10 @@ int solution(int n, vector<vector<int>> computers) {
                 g[i].push_back(j);
             }
         }
-    }
+    }  //  원소(벡터)=인접노드들    g=[[1],[0,2],[1]]
+              // 인덱스=노드번호       0 - 1 - 2
 
-    vector<bool> vst(n, false);
+    vector<bool> vst(n, false);  //[0:f, 1:f, 2:f]
     int ans = 0;
     for(int i = 0; i < n; ++i) {
         if(vst[i]) {
