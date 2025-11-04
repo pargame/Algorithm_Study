@@ -14,21 +14,41 @@
 // aloc과 bloc이 같을 수 있습니다.
 // 상대 플레이어의 캐릭터가 있는 칸으로 이동할 수 있습니다.
 #include <vector>
-#include <queue>
 #include <utility>
-#include <algorithm>
-#include <iostream>
+#include <stack>
 
 using namespace std;
 
 struct Frame {
     int i, j;
-
+    int v = -1;  //최적값
+    int nd = 0;  //다음 방향
+    Frame(int _i, int _j) :i(_i), j(_j) {}
 };
 
 vector<pair<int, int>> dir{ {1,0} ,{0,1} ,{-1,0} ,{0,-1} };
 
 int solution(vector<vector<int>> board, vector<int> aloc, vector<int> bloc) {
+    stack<Frame> st1, st2;
+    st1.push(Frame(aloc[0], aloc[1]));
+    st2.push(Frame(bloc[0], bloc[1]));
+
+    while(!(st1.size() == 1 && st1.top().nd == 4)) {
+        stack<Frame> &turn = (st1.size() + st2.size()) % 2 == 0 ? st1 : st2;
+        Frame &top = turn.top();
+
+        int ni = top.i + dir[top.nd].first;
+        int nj = top.j + dir[top.nd].second;
+        if(ni < 0 || nj < 0 || board.size() <= ni || board[0].size() <= nj || board[ni][nj] == 0) {
+            ++top.nd;
+        }
+        else if() {
+
+        }
+
+
+
+    }
 
 
 }

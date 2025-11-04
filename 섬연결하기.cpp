@@ -13,8 +13,6 @@
 
 using namespace std;
 
-
-
 int solution(int n, vector<vector<int>> costs) {
     vector<vector<pair<int, int>>> g(n);
 
