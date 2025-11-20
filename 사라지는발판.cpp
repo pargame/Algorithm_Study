@@ -16,6 +16,8 @@
 #include <vector>
 #include <utility>
 #include <stack>
+#include <utility>
+#include <algorithm>
 
 using namespace std;
 
