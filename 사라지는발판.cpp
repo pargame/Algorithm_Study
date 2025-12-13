@@ -141,8 +141,9 @@ public:
     int ans;
     
     Solver(vector<vector<int>> _board, vector<int> _aloc, vector<int> _bloc):board(_board){
+        st.resize(2);
         st[0].push(Frame(Loc(_aloc[0],_aloc[1])));
-        st[0].push(Frame(Loc(_bloc[0],_bloc[1])));
+        st[1].push(Frame(Loc(_bloc[0],_bloc[1])));
 
         GetAns();
     }
