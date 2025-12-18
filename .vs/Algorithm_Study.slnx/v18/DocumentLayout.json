@@ -22,7 +22,7 @@
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
-      "VerticalTabListWidth": 119,
+      "VerticalTabListWidth": 115,
       "DocumentGroups": [
         {
           "DockedWidth": 200,
@@ -72,7 +72,7 @@
               "RelativeDocumentMoniker": "\uC0AC\uB77C\uC9C0\uB294\uBC1C\uD310.cpp",
               "ToolTip": "E:\\repos\\Algorithm_Study\\\uC0AC\uB77C\uC9C0\uB294\uBC1C\uD310.cpp",
               "RelativeToolTip": "\uC0AC\uB77C\uC9C0\uB294\uBC1C\uD310.cpp",
-              "ViewState": "AgIAAFcAAAAAAAAAAAAywGMAAAAaAAAAAAAAAA==",
+              "ViewState": "AgIAAKYAAAAAAAAAAAAywMAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-11-20T07:56:38.461Z",
               "EditorCaption": ""
