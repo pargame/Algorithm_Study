@@ -22,6 +22,11 @@ std::string s(begin, end);              // 이터레이터 범위
 - `size()` / `length()`: 문자 수 (size_type).
 - `empty()`: 비었는지 확인 (bool).
 - `clear()`: 내용 지우기.
+- `reserve(size_type n)`: 최소 용량을 n으로 설정 (재할당 최소화).
+- `capacity()`: 현재 용량 반환 (size_type).
+- `shrink_to_fit()`: 용량을 size()에 맞춤 (C++11).
+- `resize(size_type n)`: 크기를 n으로 조절, 필요시 '\0'으로 채움.
+- `resize(size_type n, char c)`: 크기를 n으로 조절, c로 채움.
 - `append(const char* s)` / `append(std::string s)`: 뒤에 추가.
 - `insert(size_type pos, const char* s)`: 위치에 삽입.
 - `erase(size_type pos, size_type len)`: 부분 삭제.
